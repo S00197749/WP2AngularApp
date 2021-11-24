@@ -8,7 +8,7 @@ import { Book } from 'src/app/book';
   styleUrls: ['./book-details.component.css']
 })
 export class BookDetailsComponent implements OnInit {
-  @Input() book!: Book;
+  @Input() book?: Book;
   
   constructor() { }
 

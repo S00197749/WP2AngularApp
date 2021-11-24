@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { Book } from 'src/app/book';
 
 @Component({
   selector: 'app-sample-form',
@@ -7,25 +8,37 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
   styleUrls: ['./sample-form.component.css']
 })
 export class SampleFormComponent implements OnInit {
-  bookForm : FormGroup = new FormGroup({
-    title: new FormControl ('', [Validators.required, Validators.minLength(3)]),
-    year_written: new FormControl ('', [Validators.required])
-  })
-
-  get title() {
-    return this.bookForm.get('title');
-  }
-  get year_written() {
-    return this.bookForm.get('year_written');
-  }
+  @Input() book?: Book;
+  @Output() bookFormClose = new EventEmitter<Book>();
+  message: string = "";
+  bookForm! : FormGroup;
 
   constructor() { }
 
   ngOnInit(): void {
+
+    this.bookForm = new FormGroup({
+      title: new FormControl(this.book?.title, [Validators.required, Validators.minLength(3)]),
+      year_written: new FormControl(this.book?.year_written, [Validators.required, Validators.max(2024)])
+    })
   }
 
-  onSubmit(){
-    console.log('Forms submitted with ' + this.bookForm.value)
+  onSubmit() {
+    console.log('forms submitted with ');
+    console.table(this.bookForm?.value);
+    this.bookFormClose.emit(this.bookForm?.value)
+  }
+
+  get title() {
+    return this.bookForm?.get('title');
+  }
+  get year_written() {
+    return this.bookForm?.get('year_written');
+  }
+
+  closeForm() {
+    this.bookFormClose.emit(undefined)
+
   }
 
 }
